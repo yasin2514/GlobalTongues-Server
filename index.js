@@ -79,6 +79,20 @@ async function run() {
             res.send(result);
         })
 
+        // student related apis-------------------------------
+
+        app.get('/users/student/:email', async (req, res) => {
+            const email = req.params.email;
+            // if (req.decoded.email !== email) {
+            //     return { student: false }
+            // }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            const result = { student: user?.role === 'student' }
+            res.send(result);
+        })
+
+
         // admin related apis-------------------------------
 
         app.get('/users/admin/:email', async (req, res) => {
