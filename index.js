@@ -132,6 +132,11 @@ async function run() {
             const result = { instructor: user?.role === 'instructor' }
             res.send(result);
         })
+        app.get('/users/instructor', async (req, res) => {
+            const query = { role: 'instructor' }
+            const result = await userCollection.find(query).toArray();
+            res.send(result);
+        })
 
         app.patch('/users/instructor/:id', async (req, res) => {
             const id = req.params.id;
