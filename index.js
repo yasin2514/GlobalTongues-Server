@@ -146,6 +146,14 @@ async function run() {
 
         });
 
+        // instructor classes
+        app.get('/classes/myClasses/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { instructorEmail: email };
+            const result = await classCollection.find(query).toArray();
+            res.send(result);
+        })
+
 
         // classes apis-------------------------------
         app.post('/classes', async (req, res) => {
@@ -156,14 +164,16 @@ async function run() {
 
         app.patch('/classes/:id', async (req, res) => {
             const id = req.params.id;
-            const feedbackText = req.body;
+            const feedback = req.body;
+            const options = { upsert: true };
+            console.log(feedback);
             const filter = { _id: new ObjectId(id) };
             const updateDoc = {
                 $set: {
-                    feedback: feedbackText
+                    feedback
                 },
             };
-            const result = await classCollection.updateOne(filter, updateDoc);
+            const result = await classCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
 
