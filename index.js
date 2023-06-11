@@ -159,11 +159,10 @@ async function run() {
             res.send(result);
         })
 
-        // make approved
+        // make approved classes
         app.patch('/classes/approve/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
-
             const updateDoc = {
                 $set: {
                     status: 'approve'
@@ -173,11 +172,16 @@ async function run() {
             res.send(result);
         })
 
-        // make deny
+        app.get('/classes/approve', async (req, res) => {
+            const query = { status: 'approve' }
+            const result = await classCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        // make deny classes
         app.patch('/classes/deny/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
-
             const updateDoc = {
                 $set: {
                     status: 'deny'
@@ -185,6 +189,12 @@ async function run() {
             };
             const result = await classCollection.updateOne(filter, updateDoc)
             res.send(result);
+        })
+
+        app.get('/classes/deny', async (req, res) => {
+            const query = { status: 'deny' }
+            const result = await classCollection.find(query).toArray();
+            res.send(result)
         })
 
 
