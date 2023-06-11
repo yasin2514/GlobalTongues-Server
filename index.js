@@ -44,6 +44,7 @@ async function run() {
         await client.connect();
 
         const userCollection = client.db('globalTongues').collection('users');
+        const classCollection = client.db('globalTongues').collection('classes');
 
         // jwt token apis
         app.post('/jwt', (req, res) => {
@@ -51,7 +52,6 @@ async function run() {
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.send({ token })
         })
-
 
         // users apis -----------------------------------------------
 
@@ -147,7 +147,12 @@ async function run() {
         });
 
 
-
+        // classes apis-------------------------------
+        app.post('/classes', async (req, res) => {
+            const newClass = req.body;
+            const result = await classCollection.insertOne(newClass);
+            res.send(result);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
