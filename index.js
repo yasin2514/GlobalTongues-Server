@@ -53,12 +53,13 @@ async function run() {
         })
 
 
-        // users apis
+        // users apis -----------------------------------------------
 
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         })
+
         app.post('/users', async (req, res) => {
             const user = req.body;
             console.log(user)
@@ -68,6 +69,26 @@ async function run() {
                 return res.send({ message: "user already exits" })
             }
             const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
+
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // admin related apis-------------------------------
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            // if (req.decoded.email !== email) {
+            //     return { admin: false }
+            // }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            const result = { admin: user?.role === 'admin' }
             res.send(result);
         })
 
@@ -84,7 +105,20 @@ async function run() {
             res.send(result);
 
         });
+
+        // instructor related apis---------------------------
         // make instructor 
+        app.get('/users/instructor/:email', async (req, res) => {
+            const email = req.params.email;
+            // if (req.decoded.email !== email) {
+            //     return { instructor: false }
+            // }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            const result = { instructor: user?.role === 'instructor' }
+            res.send(result);
+        })
+
         app.patch('/users/instructor/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -98,13 +132,7 @@ async function run() {
 
         });
 
-        // delete user
-        app.delete('/users/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) };
-            const result = await userCollection.deleteOne(query);
-            res.send(result);
-        })
+
 
 
         // Send a ping to confirm a successful connection
