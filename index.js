@@ -156,10 +156,23 @@ async function run() {
 
         });
 
+        app.get('/instructor/myClasses/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { instructorEmail: email };
+            const result = await classCollection.find(query).toArray();
+            res.send(result);
+        })
+
 
         // classes apis-------------------------------
         app.get('/classes', async (req, res) => {
             const result = await classCollection.find().toArray();
+            res.send(result);
+        })
+        app.get('/class/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await classCollection.findOne(query);
             res.send(result);
         })
         app.post('/classes', async (req, res) => {
@@ -167,11 +180,26 @@ async function run() {
             const result = await classCollection.insertOne(newClass);
             res.send(result);
         })
+        app.patch('/updateClass/:id', async (req, res) => {
+            const id = req.params.id;
+            const course = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    availableSeats: course.availableSeats,
+                    price: course.price,
+                    image: course.image
+                }
+            }
+            const result = await classCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
         app.patch('/classes/:id', async (req, res) => {
             const id = req.params.id;
             const feedback = req.body;
             const options = { upsert: true };
-            console.log(feedback);
             const filter = { _id: new ObjectId(id) };
             const updateDoc = {
                 $set: {
@@ -179,14 +207,6 @@ async function run() {
                 },
             };
             const result = await classCollection.updateOne(filter, updateDoc, options);
-            res.send(result);
-        })
-
-        // instructor classes
-        app.get('/instructor/myClasses/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { instructorEmail: email };
-            const result = await classCollection.find(query).toArray();
             res.send(result);
         })
 
