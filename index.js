@@ -152,22 +152,17 @@ async function run() {
 
         });
 
-        // instructor classes
-        app.get('/classes/myClasses/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { instructorEmail: email };
-            const result = await classCollection.find(query).toArray();
-            res.send(result);
-        })
-
 
         // classes apis-------------------------------
+        app.get('/classes', async (req, res) => {
+            const result = await classCollection.find().toArray();
+            res.send(result);
+        })
         app.post('/classes', async (req, res) => {
             const newClass = req.body;
             const result = await classCollection.insertOne(newClass);
             res.send(result);
         })
-
         app.patch('/classes/:id', async (req, res) => {
             const id = req.params.id;
             const feedback = req.body;
@@ -183,8 +178,11 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/classes', async (req, res) => {
-            const result = await classCollection.find().toArray();
+        // instructor classes
+        app.get('/classes/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { instructorEmail: email };
+            const result = await classCollection.find(query).toArray();
             res.send(result);
         })
 
