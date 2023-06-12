@@ -179,7 +179,7 @@ async function run() {
         })
 
         // instructor classes
-        app.get('/classes/:email', async (req, res) => {
+        app.get('/instructor/myClasses/:email', async (req, res) => {
             const email = req.params.email;
             const query = { instructorEmail: email };
             const result = await classCollection.find(query).toArray();
