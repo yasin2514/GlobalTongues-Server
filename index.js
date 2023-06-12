@@ -266,6 +266,14 @@ async function run() {
             res.send(result);
         })
 
+        // student enrolled class----------------
+        app.get('/student/enrolled/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email }
+            const result = await paymentCollection.find(query).sort({ date: -1 }).toArray();
+            res.send(result);
+        })
+
         // payment related  apis----------------------------------------
 
         app.post('/payments', async (req, res) => {
