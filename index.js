@@ -45,6 +45,7 @@ async function run() {
 
         const userCollection = client.db('globalTongues').collection('users');
         const classCollection = client.db('globalTongues').collection('classes');
+        const studentClassCollection = client.db('globalTongues').collection('studentClass');
 
         // jwt token apis
         app.post('/jwt', (req, res) => {
@@ -223,6 +224,27 @@ async function run() {
             const query = { status: 'deny' }
             const result = await classCollection.find(query).toArray();
             res.send(result)
+        })
+
+        // student class apis------------------------------
+
+        app.post('/student/myClasses', async (req, res) => {
+            const course = req.body;
+            console.log(course);
+            const result = await studentClassCollection.insertOne(course);
+            res.send(result);
+        })
+        app.get('/student/myClasses/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await studentClassCollection.find(query).toArray();
+            res.send(result);
+        })
+        app.delete('/student/myClasses/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await studentClassCollection.deleteOne(query);
+            res.send(result);
         })
 
 
