@@ -60,7 +60,7 @@ async function run() {
 
         // users apis -----------------------------------------------
 
-        app.get('/users', async (req, res) => {
+        app.get('/users',verifyJWT, async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         })
@@ -154,7 +154,7 @@ async function run() {
             res.send(result);
 
         });
-
+        
         app.get('/instructor/myClasses/:email', async (req, res) => {
             const email = req.params.email;
             const query = { instructorEmail: email };
@@ -223,7 +223,7 @@ async function run() {
 
         app.get('/classes/approve', async (req, res) => {
             const query = { status: 'approve' }
-            const result = await classCollection.find(query).toArray();
+            const result = await classCollection.find(query).sort({ totalEnrolled: 1 }).toArray();
             res.send(result)
         })
 
