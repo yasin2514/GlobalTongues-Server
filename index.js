@@ -67,7 +67,6 @@ async function run() {
 
         app.post('/users', async (req, res) => {
             const user = req.body;
-            console.log(user)
             const query = { email: user.email }
             const userExit = await userCollection.findOne(query);
             if (userExit) {
@@ -210,7 +209,6 @@ async function run() {
             res.send(result);
         })
 
-        // make approved classes
         app.patch('/classes/approve/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
@@ -298,12 +296,20 @@ async function run() {
 
         app.post('/payments', async (req, res) => {
             const payment = req.body;
-            console.log(payment);
             const insertResult = await paymentCollection.insertOne(payment);
+            const oldCourseId = payment.oldCourseId;
             const query = { _id: new ObjectId(payment.courseId) }
+            const classId = new ObjectId(oldCourseId);
+
+            const updateResult = await classCollection.findOneAndUpdate(
+                { _id: classId },
+                { $inc: { availableSeats: -1, totalEnrolled: 1 } },
+                { returnOriginal: false }
+            )
 
             const deleteResult = await cartCollection.deleteMany(query);
-            res.send({ result: insertResult, deleteResult });
+
+            res.send({ result: insertResult, deleteResult, updateClass: updateResult });
 
         })
         // payment intent api ---
